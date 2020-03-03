@@ -8,6 +8,6 @@ You will need toggl account.
 yum install jq curl xdotool
 
 # Run
-./measureit.sh <login> <password>
+./measureit.sh login password
 
 
