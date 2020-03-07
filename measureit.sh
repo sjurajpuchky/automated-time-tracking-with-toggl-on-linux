@@ -31,12 +31,12 @@ fi
 
 n=0;
 wold="";
-told=`date +"%Y-%m-%dT%H:%M:%S+01:00`;
+told=`date +"%Y-%m-%dT%H:%M:%S+01:00"`;
 
 while sleep $STEP
 do 
   w=`xdotool getactivewindow getwindowname`; 
-  t=`date +"%Y-%m-%dT%H:%M:%S+01:00`;
+  t=`date +"%Y-%m-%dT%H:%M:%S+01:00"`;
   if [ "$w" != "$wold" ]; then
     ig=$(cat $ignored|grep -ve "^$"|while read i
     do
@@ -54,4 +54,3 @@ do
   fi
   n=`expr $n + $STEP`;
 done
-
