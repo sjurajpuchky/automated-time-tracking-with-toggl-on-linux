@@ -1,4 +1,4 @@
-# Automated time tracking with toggl on Linux
+# Automated time tracking with toggl on Linux / MacOS X / Windows
 
 This simple tool you can use to automated time tracking of your work, it's free for use.
 It will makes entry for each window which you spend on more than 300 sec (default optional) and makes report on
