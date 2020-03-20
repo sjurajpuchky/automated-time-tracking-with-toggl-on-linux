@@ -7,14 +7,13 @@ You will need toggl account.
 # Install on Linux
 ``yum install jq curl xdotool``
 
-# Run on Linus
+# Run on Linux
 ``./measureit.sh login password``
-
 
 # Install on MacOS X
 ``brew install jq curl xdotool``
 
-# Run on Linus
+# Run on MacOS X
 ``./measureit.sh login password``
 
 
