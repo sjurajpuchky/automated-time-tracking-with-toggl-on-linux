@@ -26,8 +26,6 @@ Install https://download.microsoft.com/download/3/1/1/311C06C1-F162-405C-B538-D9
 Install .NET Framework 4.5.2
 Install WMF 5.1+
 Install PowerShell 7+
-Install CURL for Windows
-Extend enviroment PATH with path to CURL/bin folder
 ./measureit.ps1 <toggl user name> <toggl password> [minimal interval] [step]
 ```
 
