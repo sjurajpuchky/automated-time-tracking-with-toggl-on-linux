@@ -22,7 +22,9 @@ cd automated-time-tracking-with-toggl-on-linux
 
 # Install on Windows
 ```
-Install WMF 4+
+Install https://download.microsoft.com/download/3/1/1/311C06C1-F162-405C-B538-D9DC3A4007D1/WindowsUCRT.zip
+Install .NET Framework 4.5.2
+Install WMF 5.1+
 Install PowerShell 7+
 Install CURL for Windows
 Extend enviroment PATH with path to CURL/bin folder
