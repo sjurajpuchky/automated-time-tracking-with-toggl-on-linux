@@ -27,10 +27,10 @@ function make_entry() {
   fi
 
   if [ -n "$6" ]; then
-    billable="0"
+    billable="false"
     eb="Not billable entry:"
   else
-    billable="1"
+    billable="true"
     eb="Billable entry:"
   fi
 
