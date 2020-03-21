@@ -32,3 +32,7 @@ Install PowerShell 7+
 # Usage
 Usage: < toggl user name > < toggl password > [minimal interval] [step]
 
+For ignoring keywords use ~/.measureit.ignore file, each word is each line.
+For not billable keywords use ~/.measureit.notbillable file each word is each line.
+For automatic assign to project use ~/.measureit.projetcs file each line is each entry in CSV where ";" is separator.
+Follow this format "PROJECT_ID;Keyword"
