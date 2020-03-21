@@ -27,45 +27,78 @@ $Headers = @{
     Authorization = $basicAuthValue
 }
 
-Invoke-WebRequest -Headers $Headers -Method GET -URI https://www.toggl.com/api/v8/me 2>$null| ConvertFrom-Json|Select-Object -Property data -ExpandProperty data|Select-Object -Property api_token -ExpandProperty api_token
+Invoke-WebRequest -Headers $Headers -Method GET -URI "https://www.toggl.com/api/v8/me" 2>$null| ConvertFrom-Json|Select-Object -Property data -ExpandProperty data|Select-Object -Property api_token -ExpandProperty api_token
 }
 
 function make_entry() {
 
-    if ($args[3]) {
-      project_id=$args[5]
-      ep="assigned to project $project_id"
-    } else {
-      project_id=""
-      ep="not assigned"
-    }
-  
     if ($args[4]) {
-      billable="0"
-      eb="Not billable entry:"
+      $project_id=$args[4]
+      $ep="assigned to project $project_id"
     } else {
-      billable="1"
-      eb="Billable entry:"
+      $project_id=""
+      $ep="not assigned"
     }
   
-    json="{\"time_entry\":{\"description\":\"$args[0]\",\"created_with\":\"measureit.ps1\",\"start\":\"$args[1]\",\"duration\":$args[2]}}"
+    if ($args[5]) {
+      $billable=$FALSE
+      $eb="Not billable entry:"
+    } else {
+      $billable=$TRUE
+      $eb="Billable entry:"
+    }
+
+    $pair = "$($args[3]):api_token"
+
+    $encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($pair))
+    
+    $basicAuthValue = "Basic $encodedCreds"
+    
+    $Headers = @{
+        Authorization = $basicAuthValue
+    }
+
+    if ($project_id) { 
+    $Record = @{
+      time_entry = @{
+        description = $args[0]
+        created_with = "measureit"
+        start = $args[1]
+        duration = $args[2]
+        billable = $billable
+        pid = $project_id
+      }
+    }  
+  } else { 
+    $Record = @{
+      time_entry = @{
+        description = $args[0]
+        created_with = "measureit"
+        start = $args[1]
+        duration = $args[2]
+        billable = $billable
+      }
+    }  
+  } 
   
-    curl -v -u $args[3]:api_token -H "Content-Type: application/json" -d "$json" -X POST https://www.toggl.com/api/v8/time_entries 2>$null > $null
-    echo "$eb $args[0] $args[1] $args[3] $ep"
+    $json=$($Record|ConvertTo-Json);
+    Invoke-WebRequest -Headers $Headers -ContentType "application/json" -Method POST -URI "https://www.toggl.com/api/v8/time_entries" -Body "$json" 2>$null >$null
+    echo "$eb $($args[0]) $($args[1]) $($args[2]) sec $ep"
   }
 
 if (not-exist "$ignored") {
-  echo -n > $ignored
+  echo > $ignored
 }
 if (not-exist "$projects") {
-  echo -n > $projects
+  echo > $projects
 }
 if (not-exist "$notbillable") {
-  echo -n > $notbillable
+  echo > $notbillable
 }
 
 $wold = ""
 $n = 0
+$told = $(Get-Date -Format "yyyy-MM-ddTHH:mm:ss+01:00")
 
 $TUSER=$args[0];
 $TPASS=$args[1];
@@ -78,7 +111,7 @@ if ( !$TPASS ) {
 }
 
 if ( !$INTERVAL ) { 
-    $INTERVAL = 1;
+    $INTERVAL = 300;
 }
 
 if ( !$STEP ) {
@@ -93,16 +126,35 @@ while(1){
         Where-Object { $_.mainWindowHandle -eq $hwnd } | 
         Select-Object MainWindowTitle -ExpandProperty MainWindowTitle);
 
-    #$t = $(Get-Date -Format "yyyy-MM-ddTHH:mm:ss+01:00")
-    #if ($w -ne $wold) {
-        #if (($n -gt $INTERVAL)) {
-           $api_token=$( get_token $TUSER $TPASS);
-           echo $api_token;
-        #}
+    $t = $(Get-Date -Format "yyyy-MM-ddTHH:mm:ss+01:00")
+    if ($w -ne $wold) {
+        $ig=$(Get-Content $ignored | ForEach-Object {
+          if ( $wold -match $_ ) {
+            echo "yes";
+          }
+        });
+        $project_id=$(Get-Content $projects | ForEach-Object {
+          $p = $($_|ConvertFrom-Csv -Delimiter ";" -Header Id,Kw|Select-Object -Property Id -ExpandProperty Id)
+          $q = $($_|ConvertFrom-Csv -Delimiter ";" -Header Id,Kw|Select-Object -Property Kw -ExpandProperty Kw)
+          if ( $wold -match $q ) {
+            echo $p;
+          }
+        });
+        $notbill=$(Get-Content $notbillable | ForEach-Object {
+          if ( $wold -match $_ ) {
+            echo "yes";
+          }
+        });
+        
+        if ((-not $ig) -and ($n -ge $INTERVAL)) {
+           $api_token=$(get_token $TUSER $TPASS);
+           make_entry "$wold" "$told" "$n" "$api_token" "$project_id" "$notbill"
+        }
     $n = 0;
-    $wold = $w
-    #}
-    sleep -Milliseconds 1000
+    $wold = $w;
+    $told = $t;
+    }
+    sleep -Milliseconds $($STEP * 1000)
     $n = $n + 1
 }
 

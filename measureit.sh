@@ -34,13 +34,17 @@ function make_entry() {
     eb="Billable entry:"
   fi
 
-  json="{\"time_entry\":{\"description\":\"$1\",\"created_with\":\"measureit.sh\",\"start\":\"$2\",\"duration\":$3}}"
+  if [ -n "$project_id" ]; then
+     json="{\"time_entry\":{\"description\":\"$1\",\"created_with\":\"measureit\",\"start\":\"$2\",\"duration\":$3,\"billable\":$billable,\"pid\":$project_id}}"
+  else 
+     json="{\"time_entry\":{\"description\":\"$1\",\"created_with\":\"measureit\",\"start\":\"$2\",\"duration\":$3,\"billable\":$billable}}"
+  fi
 
   curl -v -u $4:api_token \
     -H "Content-Type: application/json" \
     -d "$json" \
     -X POST https://www.toggl.com/api/v8/time_entries 2>/dev/null >/dev/null
-  echo "$eb $1 $2 $3 $ep"
+  echo "$eb $1 $2 $3 sec $ep"
 }
 
 if [ -z "$2" ]; then
@@ -71,19 +75,19 @@ while sleep $STEP; do
       if [ -n "$(echo -n "$wold" | grep "$i")" ]; then
         echo "yes";
       fi
-    done)
+    done);
     project_id=$(cat $projects | grep -ve "^$" | while read i; do
       pid=$(echo $i | cut -d";" -f1)
       q=$(echo $i | cut -d";" -f2)
       if [ -n "$(echo -n "$wold" | grep "$q")" ]; then
         echo "$pid";
       fi
-    done)
+    done);
     notbill=$(cat $notbillable | grep -ve "^$" | while read i; do
       if [ -n "$(echo -n "$wold" | grep "$i")" ]; then
         echo "yes";
       fi
-    done)
+    done);
     if [ -z "$ig" ] && [ $n -gt $INTERVAL ]; then
       api_token=$(curl -u $TUSER:$TPASS -X GET https://www.toggl.com/api/v8/me 2>/dev/null | jq -r ".data.api_token")
       make_entry "$wold" "$told" "$n" "$api_token" "$project_id" "$notbill"
