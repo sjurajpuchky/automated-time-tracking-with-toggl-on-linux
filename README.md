@@ -21,7 +21,13 @@ cd automated-time-tracking-with-toggl-on-linux
 ```
 
 # Install on Windows
-Comming soon...
+```
+Install WMF 4+
+Install PowerShell 7+
+Install CURL for Windows
+Extend enviroment PATH with path to CURL/bin folder
+./measureit.ps1 <toggl user name> <toggl password> [minimal interval] [step]
+```
 
 # Usage
 Usage: < toggl user name > < toggl password > [minimal interval] [step]
