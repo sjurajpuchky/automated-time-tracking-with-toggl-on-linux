@@ -5,15 +5,15 @@ projects="$HOME/.measureit.projects"
 notbillable="$HOME/.measureit.notbillable"
 
 if [ ! -f "$ignored" ]; then
-  echo -n >$ignored
+  echo -n > $ignored
 fi
 
 if [ ! -f "$projects" ]; then
-  echo -n >$projects
+  echo -n > $projects
 fi
 
 if [ ! -f "$notbillable" ]; then
-  echo -n >$notbillable
+  echo -n > $notbillable
 fi
 
 function make_entry() {
