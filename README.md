@@ -21,6 +21,7 @@ cd automated-time-tracking-with-toggl-on-linux
 ```
 
 # Install on Windows
+Internet Explorer is required
 ```
 Install https://download.microsoft.com/download/3/1/1/311C06C1-F162-405C-B538-D9DC3A4007D1/WindowsUCRT.zip
 Install .NET Framework 4.5.2
