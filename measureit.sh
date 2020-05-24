@@ -16,6 +16,7 @@ if [ ! -f "$notbillable" ]; then
   echo -n > $notbillable
 fi
 
+
 function make_entry() {
 
   if [ -n "$5" ]; then
@@ -47,6 +48,23 @@ function make_entry() {
   echo "$eb $1 $2 $3 sec $ep"
 }
 
+function import_projects() {
+  curl -u "$1:api_token" -X GET "https://www.toggl.com/api/v8/me?with_related_data=true" 2>/dev/null|jq '.data.projects'|grep -e \"id -e \"name|while read l
+ do
+  v=`echo $l|cut -d":" -f2|cut -d, -f1|cut -d" " -f2`;
+  id=$v;
+  read l;
+  v=`echo $l|cut -d":" -f2|cut -d, -f1|cut -d"\"" -f2`;
+  name=$v;
+  p=`cat $projects|grep "$name"`;
+  if [ -z "$p" ]; then
+   echo "$id;$name" >> $projects
+  fi
+done
+ 
+ 
+}
+
 if [ -z "$2" ]; then
   echo "Usage: <toggl user name> <toggl password> [minimal interval] [step]"
   exit
@@ -67,10 +85,13 @@ n=0
 wold=""
 told=$(date +"%Y-%m-%dT%H:%M:%S+01:00")
 
+api_token=$(curl -u $TUSER:$TPASS -X GET https://www.toggl.com/api/v8/me 2>/dev/null | jq -r ".data.api_token");
+import_projects $api_token;
+
 while sleep $STEP; do
-  w=$(xdotool getactivewindow getwindowname)
+  w=$(xdotool getactivewindow getwindowname 2> /dev/null|tr '[:upper:]' '[:lower:]'|iconv )
   t=$(date +"%Y-%m-%dT%H:%M:%S+01:00")
-  if [ "$w" != "$wold" ]; then
+  if [ "$w" != "$wold" ] && [ -n "$w" ]; then
     ig=$(cat $ignored | grep -ve "^$" | while read i; do
       if [ -n "$(echo -n "$wold" | grep "$i")" ]; then
         echo "yes";
@@ -79,7 +100,7 @@ while sleep $STEP; do
     project_id=$(cat $projects | grep -ve "^$" | while read i; do
       pid=$(echo $i | cut -d";" -f1)
       q=$(echo $i | cut -d";" -f2)
-      if [ -n "$(echo -n "$wold" | grep "$q")" ]; then
+      if [ -n "$(echo -n "$wold" | grep -i "$q")" ]; then
         echo "$pid";
       fi
     done);
