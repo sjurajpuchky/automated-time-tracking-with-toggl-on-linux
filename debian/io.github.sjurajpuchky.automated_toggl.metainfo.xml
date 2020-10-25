@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="console-application">
+  <id>io.github.sjurajpuchky.automated_toggl</id>
+  
+  <name>automated-toggl</name>
+  <summary>automated-toggl</summary>
+  
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>0BSD</project_license>
+  
+  <description>
+    <p>
+      This simple tool you can use to automated time tracking of your work, it&apos;s free for use. It will makes entry for each window which you spend on more than 300 sec (default optional) and makes report on You will need toggl account.
+    </p>
+  </description>
+  
+  <icon type="stock">automated-toggl</icon>
+  
+  <categories>
+    <category>Development</category>
+    <category>ProjectManagement</category>
+  </categories>
+  
+  <provides>
+    <binary>measureit</binary>
+  </provides>
+</component>
+
