@@ -37,19 +37,19 @@ function make_entry() {
 
   if [ -n "$project_id" ]; then
      json="{\"time_entry\":{\"description\":\"$1\",\"created_with\":\"measureit\",\"start\":\"$2\",\"duration\":$3,\"billable\":$billable,\"pid\":$project_id}}"
-  else 
+  else
      json="{\"time_entry\":{\"description\":\"$1\",\"created_with\":\"measureit\",\"start\":\"$2\",\"duration\":$3,\"billable\":$billable}}"
   fi
 
   curl -v -u $4:api_token \
     -H "Content-Type: application/json" \
     -d "$json" \
-    -X POST https://www.toggl.com/api/v8/time_entries 2>/dev/null >/dev/null
+    -X POST https://api.track.toggl.com/api/v8/time_entries 2>/dev/null >/dev/null
   echo "$eb $1 $2 $3 sec $ep"
 }
 
 function import_projects() {
-  curl -u "$1:api_token" -X GET "https://www.toggl.com/api/v8/me?with_related_data=true" 2>/dev/null|jq '.data.projects'|grep -e \"id -e \"name|while read l
+  curl -u "$1:api_token" -X GET "https://api.track.toggl.com/api/v8/me?with_related_data=true" 2>/dev/null|jq '.data.projects'|grep -e \"id -e \"name|while read l
  do
   v=`echo $l|cut -d":" -f2|cut -d, -f1|cut -d" " -f2`;
   id=$v;
@@ -61,8 +61,8 @@ function import_projects() {
    echo "$id;$name" >> $projects
   fi
 done
- 
- 
+
+
 }
 
 if [ -z "$2" ]; then
@@ -85,7 +85,7 @@ n=0
 wold=""
 told=$(date +"%Y-%m-%dT%H:%M:%S+01:00")
 
-api_token=$(curl -u $TUSER:$TPASS -X GET https://www.toggl.com/api/v8/me 2>/dev/null | jq -r ".data.api_token");
+api_token=$(curl -u $TUSER:$TPASS -X GET https://api.track.toggl.com/api/v8/me 2>/dev/null | jq -r ".data.api_token");
 import_projects $api_token;
 
 while sleep $STEP; do
@@ -110,7 +110,7 @@ while sleep $STEP; do
       fi
     done);
     if [ -z "$ig" ] && [ $n -gt $INTERVAL ]; then
-      api_token=$(curl -u $TUSER:$TPASS -X GET https://www.toggl.com/api/v8/me 2>/dev/null | jq -r ".data.api_token")
+      api_token=$(curl -u $TUSER:$TPASS -X GET https://api.track.toggl.com/api/v8/me 2>/dev/null | jq -r ".data.api_token")
       make_entry "$wold" "$told" "$n" "$api_token" "$project_id" "$notbill"
     fi
     n=0
