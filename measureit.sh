@@ -66,8 +66,9 @@ done
 }
 
 if [ -z "$2" ]; then
-  echo "Usage: <toggl user name> <toggl password> [minimal interval] [step]"
-  exit
+    echo -e "Usage:\n\t$(basename $0) <toggl user name> <toggl password> [minimal interval] [step]"
+    echo -e "\t$(basename $0) --token <api token> [minimal interval] [step]\n"
+    exit
 fi
 
 TUSER=$1
@@ -85,7 +86,15 @@ n=0
 wold=""
 told=$(date +"%Y-%m-%dT%H:%M:%S+01:00")
 
-api_token=$(curl -u $TUSER:$TPASS -X GET https://api.track.toggl.com/api/v8/me 2>/dev/null | jq -r ".data.api_token");
+get_api_token(){
+    if [ "$TUSER" == "--token" ] ; then
+        echo $TPASS
+    else
+        curl -u $TUSER:$TPASS -X GET https://api.track.toggl.com/api/v8/me 2>/dev/null | jq -r ".data.api_token"
+    fi
+}
+
+api_token=$(get_api_token)
 import_projects $api_token;
 
 while sleep $STEP; do
@@ -110,7 +119,7 @@ while sleep $STEP; do
       fi
     done);
     if [ -z "$ig" ] && [ $n -gt $INTERVAL ]; then
-      api_token=$(curl -u $TUSER:$TPASS -X GET https://api.track.toggl.com/api/v8/me 2>/dev/null | jq -r ".data.api_token")
+      api_token=$(get_api_token)
       make_entry "$wold" "$told" "$n" "$api_token" "$project_id" "$notbill"
     fi
     n=0
