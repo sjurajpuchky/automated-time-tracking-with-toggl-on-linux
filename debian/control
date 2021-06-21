@@ -1,0 +1,19 @@
+Source: automated-toggl
+Build-Depends: debhelper (>= 10~)
+Standards-Version: 3.9.8
+Maintainer: Vítězslav Dvořák <info@vitexsoftware.cz>
+Uploaders: Vitex <vitex@hippy.cz>
+Priority: optional
+Homepage: https://github.com/sjurajpuchky/automated-time-tracking-with-toggl-on-linux
+Section: development
+
+Package: automated-toggl
+Depends: ${misc:Depends},bash (>=5~) , jq, curl, xdotool
+Architecture: all
+Section: devel
+Priority: optional
+Description: Automated time tracking with toggl
+ This simple tool you can use to automated time tracking of 
+ your work, it's free for use. It will makes entry for each 
+ window which you spend on more than 300 sec (default optional) 
+ and makes report on You will need toggl account.

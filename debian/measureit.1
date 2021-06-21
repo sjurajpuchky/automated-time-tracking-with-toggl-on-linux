@@ -1,0 +1,32 @@
+.\"Modified from man(1) of FreeBSD, the NetBSD mdoc.template, and mdoc.samples.
+.\"See Also:
+.\"man mdoc.samples for a complete listing of options
+.\"man mdoc for the short list of editing options
+.\"/usr/share/misc/mdoc.template
+.Dd 10/25/2020               \" DATE
+.Dt automated-toggl 1      \" Program name and manual section number
+.Os Linux
+.Sh NAME                 \" Section Header - required - don't modify
+.Nm automated-toggl,
+.Nd Automated time tracking with toggl
+.Sh SYNOPSIS             \" Section Header - required - don't modify
+.Nm
+.Op Fl toggl username
+.Op Fl toggl password
+.Op Ar minimal interval
+.Op Ar step            
+.Sh DESCRIPTION          \" Section Header - required - don't modify
+This simple tool you can use to automated time tracking of your work, it's free 
+for use. It will makes entry for each window which you spend on more than 300 sec 
+(default optional) and makes report on You will need toggl account.
+.Sh FILES
+.Bl  -tag -width "~/.measureit.projetcs" -compact
+.It Pa ~/.measureit.ignore
+ignoring keywords, each word is each line
+.It Pa ~/.measureit.notbillable
+not billable keywords, each word is each line
+.It Pa ~/.measureit.projetcs
+automatic assign to project use each line is each entry in CSV where ";" is separator. Follow this format "PROJECT_ID;Keyword"
+.El
+.\" .Sh BUGS              \" Document known, unremedied bugs
+.\" .Sh HISTORY           \" Document history if command behaves in a unique manner
